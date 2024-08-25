@@ -1,0 +1,1 @@
+{"progress": 101874, "level": 142, "xp": 34400, "badges": ["Cool", "COOOL", "2", "Nouveau Badge", "Test"], "streak": 3, "currency": 0, "total_cards": 101874, "total_time": 289197}
