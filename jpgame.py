@@ -249,41 +249,16 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
         " " * 20 + "Japanese Learning Game",
         "=" * 60,   
         ]
-
-        right_texts = [
-        "                                                                                ",
-        "                                                                                ",
-        "                                                                                ",
-        "                                                                                ",
-        "                                    @@@@@@.                                     ",
-        "                                      /@@@@@@@                                  ",
-        "                                       @@@@@                                    ",
-        "                                       @@@@                                     ",
-        "                                      @@@@*                                     ",
-        "              (                       @@@@                &@@@@@                ",
-        "              @@@                  .#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@             ",
-        "                @@@@@@@@@@@@@@@@@@@* @@@@                   @@@@@               ",
-        "                  @@@@#              @@@@                   @@@@                ",
-        "                                    @@@@                   @@@@@                ",
-        "                                   (@@@/                   @@@@.                ",
-        "                                   @@@@                   /@@@@                 ",
-        "                                  @@@@                    @@@@*                 ",
-        "                                 @@@@                    (@@@@                  ",
-        "                               &@@@(                     @@@@                   ",
-        "                              @@@@                      @@@@@                   ",
-        "                            @@@@#                      @@@@@                    ",
-        "                          *@@@@      @@               @@@@@                     ",
-        "                        /@@@@          @@@,          @@@@@                      ",
-        "                      @@@@.              .@@@@     @@@@@@                       ",
-        "                    @@@@                    @@@@@@@@@@@                         ",
-        "                 @@@#                        @@@@@@@&                           ",
-        "             %@@@                             //                                ",
-        "         .@@@                                                                   ",
-        "                                                                                ",
-        "                                                                                ",
-        "                                                                                ",
-        "                                                                                ",
-        ]
+        
+        with open("ascii-art.txt", encoding="utf8") as f:
+            right_texts = f.read().splitlines() # Just put the ascii art in ascii-art.txt and this line will split each line of the txt
+            t=0
+            len_margin = len(f.readline())
+            len_ascii = len(right_texts)
+            while len_ascii < 32 : # Ensuring that the ascii art has enough lines to not disrupt terminal print
+                right_texts.insert(0, " "*len_margin) # Add top margin
+                right_texts.append(" "*len_margin) # Add bottom margin
+                len_ascii+=2
         
         for left_text, right_text in zip(left_texts, right_texts):
             space_count = total_length - len(str(left_text)) - len(str(right_text))
