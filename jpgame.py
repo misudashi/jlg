@@ -5,40 +5,39 @@ import os
 import threading
 # import atexit
 from pypresence import Presence #Rich Presence
+import pypresence.exceptions
 from threading import Thread
 # import signal # pour éviter de perdre le total time quand on ferme avec la croix
 import win32api
 
-
-
-start_time = int(time.time())
-client_id = "1235640528364900452"  # Rich Presence client ID
-RPC= Presence(client_id)
-RPC.connect()
-RPC.update(
-        details = "jpgame.py",
-        start = start_time,
-        large_image = "1",
-        large_text = "JLG"    
-                )
-
-def parallel_function():
-    while True:
-        RPC.update(
+try:
+    start_time = int(time.time())
+    client_id = "1235640528364900452"  # Rich Presence client ID
+    RPC= Presence(client_id)
+    RPC.connect()
+    RPC.update(
             details = "jpgame.py",
             start = start_time,
             large_image = "1",
             large_text = "JLG"    
-                )
-        time.sleep(6)
+                    )
 
-parallel_thread = threading.Thread(target=parallel_function)
-parallel_thread.daemon = True  # Set as daemon so it will terminate when the main program terminates
-parallel_thread.start()
+    def parallel_function():
+        while True:
+            RPC.update(
+                details = "jpgame.py",
+                start = start_time,
+                large_image = "1",
+                large_text = "JLG"    
+                    )
+            time.sleep(6)
 
-
-
-
+    parallel_thread = threading.Thread(target=parallel_function)
+    parallel_thread.daemon = True  # Set as daemon so it will terminate when the main program terminates
+    parallel_thread.start()
+except pypresence.exceptions.DiscordNotFound:
+    print("Can't connect to Discord.")
+    time.sleep(2)
 
 #def on_exit(signal_type):
   # print('caught signal:', str(signal_type))
