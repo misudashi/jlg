@@ -39,26 +39,8 @@ except pypresence.exceptions.DiscordNotFound:
     print("Can't connect to Discord.")
     time.sleep(2)
 
-#def on_exit(signal_type):
-  # print('caught signal:', str(signal_type))
-
-
-#win32api.SetConsoleCtrlHandler(on_exit, True)
-
 class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
 
-    #def on_exit(self, signal_type):
-       #     self.total_time += int(time.time() - self.start_time)
-        #    print("Program Credits: Misudashi. Help for programming : Aidyn.")
-        #    print("EXITED PRINT")
-         #   self.save_progress()
-         #   sys.exit()
-
-
-   # def save_progress_periodically(self):
-    #    self.save_progress()  # Save progress
-    #    self.save_timer = threading.Timer(5, self.save_progress_periodically)
-      #  self.save_timer.start()
 
     def __init__(self):  # Initializing the class with constructor method
         # Initializing attributes for the game
@@ -73,14 +55,10 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
         self.total_time = 0   # Total time spent in the game
         self.load_progress()  # Loading saved progress when initializing the game
         self.initialize_game()  # Initializing the game state
-        self.start_time = time.time()  # Starting time of the game
-        #self.save_timer = threading.Timer(5, self.save_progress_periodically)
-        #self.save_timer.start()
+        self.start_time = int(time.time()) - self.total_time  # Starting time of the game
         print("1 lvl = " + str(self.level))
         print("Initializing...")
         
-
-
 
     def load_progress(self):  # Method to load player's progress from a file
         try:
@@ -97,6 +75,7 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
                 self.total_time = data.get('total_time', 0)
                 print("2 lvl = " + str(self.level))
                 print("Loading progress...")
+        
         except FileNotFoundError:  # Handling file not found error
             pass
 
@@ -120,26 +99,17 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
         self.progress += num_cards  # Incrementing progress by the number of completed Anki cards
         self.total_cards += num_cards  # Incrementing total cards completed
         self.xp += 100 * num_cards  # Incrementing XP based on completed cards
-        self.total_time += int(time.time() - self.start_time)
+        self.total_time += int(time.time()) - self.start_time
         self.check_level_up()  # Checking if the player has leveled up
         self.check_daily_goal()  # Checking if the daily goal has been met
         self.save_progress()  # Saving progress after completion
         print("Completing Anki Cards...")
 
     def earn_badge(self, badge):  # Method to earn a badge
-        self.total_time += int(time.time() - self.start_time)
+        self.total_time += int(time.time()) - self.start_time      
         self.badges.append(badge)  # Adding the earned badge to the list
         self.save_progress()  # Saving progress after earning badge
         print("Earning badge...")
-
-    #def level_up(self):  # Method to level up the player
-     #   self.level += 1  # Incrementing the player's level
-      #  # Resetting XP to 0 if it exceeds the required amount for the new level
-       # self.xp = max(0, self.xp - self.xp_required_for_level(self.level))
-        #print(f"\nCongratulations! You've reached Level {self.level}!")  # Printing level up message
-        #self.save_progress()  # Saving progress after leveling up
-        #print("4 lvl = " + str(self.level))
-        #print("Leveling up...")
 
     def level_up(self):  # Method to level up the player
      remaining_exp = max(0, self.xp - self.xp_required_for_level(self.level))  # Calculate remaining experience
@@ -192,6 +162,7 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
             self.currency = 0
             self.total_cards = 0
             self.total_time = 0
+            self.start_time = int(time.time())
             self.save_progress()  # Saving progress after data reset
             print("Resetting data...")
             print("All data has been reset.")  # Printing data reset confirmation message
@@ -201,18 +172,18 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
 
     def show_progress(self):  # Method to display player's progress
         # Printing game header and player's progress information
-
         os.system("cls")
-
         total_length = 150
 
         progress_bar = "#" * int((self.xp / (self.xp_required_for_level(self.level)) * 20))    
-        total_elapsed_time = int(time.time() - self.start_time) + self.total_time
-        hours = total_elapsed_time // 3600
-        minutes = (total_elapsed_time % 3600) // 60
-        seconds = total_elapsed_time % 60
-        self.total_time = total_elapsed_time
+
+        self.total_time += (int(time.time()) - self.start_time - self.total_time)
+        
         self.save_progress()
+        
+        hours = self.total_time // 3600
+        minutes = (self.total_time % 3600) // 60
+        seconds = self.total_time % 60
 
         left_texts = [
         "=" * 60,
@@ -223,7 +194,7 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
         "XP:".ljust(20) + str(self.xp) + " / " + str(self.xp_required_for_level(self.level)),
         "Progress:".ljust(20) + "[" + str(progress_bar.ljust(20)) + "]" + "{:.2f}%".format((self.xp / self.xp_required_for_level(self.level)) * 100),
         "Total Anki Cards Completed:".ljust(20) + " " + str(self.total_cards),
-        "Total Time Spent:".ljust(20) + f"{hours} hours, {minutes} minutes, {seconds} seconds",
+        "Total Time Spent:".ljust(20) + f"{hours} hours, {minutes} minutes, {seconds} seconds", 
         "Badges Earned:".ljust(20) + ", ".join(self.badges),
         "",
         "",
@@ -258,7 +229,7 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
                 right_texts.insert(0, " "*len_margin) # Add top margin
                 right_texts.append(" "*len_margin) # Add bottom margin
                 len_ascii+=2
-        
+
         for left_text, right_text in zip(left_texts, right_texts):
             space_count = total_length - len(str(left_text)) - len(str(right_text))
 
@@ -266,66 +237,28 @@ class JapaneseLearningGame:  # Defining a class named JapaneseLearningGame
             final_string = str(left_text) + " " * space_count + str(right_text)
     
             print(final_string)
-                                                                         
-
-        #print("\n" + "=" * 60)
-        #print(" " * 20 + "Japanese Learning Game")
-        #print("=" * 60)
-        #print("Level:".ljust(20), str(self.level)) # .ljust(20) = pour centrer
-        #print("XP:".ljust(20), self.xp, "/", (self.xp_required_for_level(self.level)))
-        #progress_bar = "#" * int((self.xp / (self.xp_required_for_level(self.level)) * 20))
-        #print("Progress:".ljust(20), "[" + progress_bar.ljust(20) + "]", "{:.2f}%".format((self.xp / self.xp_required_for_level(self.level)) * 100))
-        #print("Total Anki Cards Completed:".ljust(20), self.total_cards)
-        #elapsed_time = int(time.time() - self.start_time) + self.total_time
-        #hours = elapsed_time // 3600
-        #minutes = (elapsed_time % 3600) // 60
-        #seconds = elapsed_time % 60
-        #print("Total Time Spent:".ljust(20), f"{hours} hours, {minutes} minutes, {seconds} seconds")
-        #print("Badges Earned:".ljust(20), ", ".join(self.badges))
-        #print("=" * 60)
-
-        #self.save_progress()
-
 
     def play(self):
-      #  try:
-            while True:
+        while True:
+            self.show_progress()
+            choice = input("か => ")
+            if choice == '1':
+                num_cards = int(input("Enter the number of Anki cards completed: "))
+                self.complete_anki_cards(num_cards)
+            elif choice == '2':
+                badge_name = input("Enter badge name: ")
+                self.earn_badge(badge_name)
+            elif choice == '3':
+                self.reset_data()
+            elif choice == '4':
+                print("Program Credits: Misudashi. Help for programming : Aidyn.")
                 self.show_progress()
-                choice = input("か => ")
-                if choice == '1':
-                    num_cards = int(input("Enter the number of Anki cards completed: "))
-                    self.complete_anki_cards(num_cards)
-                elif choice == '2':
-                    badge_name = input("Enter badge name: ")
-                    self.earn_badge(badge_name)
-                elif choice == '3':
-                    self.reset_data()
-                elif choice == '4':
-                    # Incrementing total time spent in the game before exiting
-                    self.total_time += int(time.time() - self.start_time)
-                    print("Program Credits: Misudashi. Help for programming : Aidyn.")
-                    self.save_progress()
-                    print("saved")
-                    sys.exit()
-                    print("exited")
-                else:
-                    print("Invalid choice. Please enter a valid option.")
-                    self.save_progress()
-                self.save_progress()
-      #  except KeyboardInterrupt:  # Handle Ctrl+C
-            # Incrementing total time spent in the game before exiting
-        #    self.total_time += int(time.time() - self.start_time)
-         #   print("Program terminated.")
-         #   self.save_progress()
-         #   sys.exit()
+                os.system("cls")
+                sys.exit()
+            else:
+                print("Invalid choice. Please enter a valid option.")
+                self.show_progress()
+            # self.show_progress()
+    
 
-
-
-game = JapaneseLearningGame()
-game.play()  # Starting the game
-
-def exit_handler(self):                  # Incrementing total time spent in the game before exiting
-        total_elapsed_time = int(time.time() - game.start_time) + game.total_time
-        game.total_time = total_elapsed_time
-        game.save_progress()
-win32api.SetConsoleCtrlHandler(game.on_exit, True)
+JapaneseLearningGame().play()  # Starting the game
